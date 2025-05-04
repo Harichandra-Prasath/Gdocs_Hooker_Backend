@@ -24,7 +24,7 @@ app.add_middleware(
 drive_uploader = DriveUploader()
 
 
-@app.post("/check")
+@app.get("/check")
 def Check():
     return JSONResponse({"message": "running"})
 
@@ -42,7 +42,7 @@ def Upload(upload_data: UploadData):
                             status_code=404)
 
     _, extension = os.path.splitext(file_path)
-    if extension != "docx":
+    if extension != ".docx":
         return JSONResponse({"status": "error", "message": "only docx format is allowed "}, status_code=400)
 
     uploaded_id = drive_uploader.upload_to_drive(file_path)
