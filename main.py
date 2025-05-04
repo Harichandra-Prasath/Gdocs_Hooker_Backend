@@ -24,14 +24,26 @@ app.add_middleware(
 drive_uploader = DriveUploader()
 
 
+@app.post("/check")
+def Check():
+    return JSONResponse({"message": "running"})
+
+
 @app.post("/upload_to_drive")
 def Upload(upload_data: UploadData):
 
     file_path = upload_data.FilePath
 
+    if not file_path.startswith(os.getenv("HOME")):
+        return JSONResponse({"status": "error", "message": "Invalid Path (not home)"}, status_code=400)
+
     if not os.path.isfile(file_path):
         return JSONResponse({"status": "error", "message": "file does not exist"},
                             status_code=404)
+
+    _, extension = os.path.splitext(file_path)
+    if extension != "docx":
+        return JSONResponse({"status": "error", "message": "only docx format is allowed "}, status_code=400)
 
     uploaded_id = drive_uploader.upload_to_drive(file_path)
     if uploaded_id:
