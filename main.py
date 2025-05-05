@@ -1,4 +1,6 @@
 import os
+import argparse
+import uvicorn
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,8 +11,13 @@ from fastapi.responses import JSONResponse
 from schemas import UploadData
 from uploader import DriveUploader
 
-# Load the .env file
-load_dotenv(".env")
+parser = argparse.ArgumentParser()
+parser.add_argument("--env-file", type=str, required=True,
+                    help="Path to .env file")
+args = parser.parse_args()
+
+load_dotenv(dotenv_path=args.env_file)
+
 
 app = FastAPI()
 app.add_middleware(
@@ -52,3 +59,7 @@ def Upload(upload_data: UploadData):
 
     return JSONResponse({"status": "error", "message": "file upload failed"},
                         status_code=500)
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", port=int(os.getenv("PORT", 8000)))
