@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Get the directory information
+dir=$(dirname "$0")
+
+# Move to the directory
+cd "$dir"
+
 # Activate the virutal environment
 source .venv/bin/activate
 
